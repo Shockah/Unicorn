@@ -1,5 +1,7 @@
 package io.shockah.util;
 
+import io.shockah.util.func.Action1;
+
 public final class Box<E> {
 	public E value;
 	
@@ -9,6 +11,10 @@ public final class Box<E> {
 	
 	public Box(E value) {
 		this.value = value;
+	}
+	
+	public static <E> Box<E> of(E value) {
+		return new Box<>(value);
 	}
 	
 	@Override
@@ -24,5 +30,10 @@ public final class Box<E> {
 	@Override
 	public String toString() {
 		return String.format("[Box: %s]", value);
+	}
+	
+	public void on(Action1<E> f) {
+		if (value != null)
+			f.call(value);
 	}
 }
