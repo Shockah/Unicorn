@@ -18,6 +18,11 @@ public final class Box<E> {
 	}
 	
 	@Override
+	public int hashCode() {
+		return value != null ? value.hashCode() : 0;
+	}
+	
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Box<?>))
 			return false;
