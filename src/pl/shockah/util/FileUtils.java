@@ -1,4 +1,4 @@
-package io.shockah.util;
+package pl.shockah.util;
 
 import java.io.IOException;
 import java.nio.file.Files;

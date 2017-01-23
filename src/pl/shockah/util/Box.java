@@ -1,6 +1,6 @@
-package io.shockah.util;
+package pl.shockah.util;
 
-import io.shockah.util.func.Action1;
+import pl.shockah.util.func.Action1;
 
 public final class Box<E> {
 	public E value;

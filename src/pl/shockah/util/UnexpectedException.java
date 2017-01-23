@@ -1,4 +1,4 @@
-package io.shockah.util;
+package pl.shockah.util;
 
 public class UnexpectedException extends RuntimeException {
 	private static final long serialVersionUID = 5086451181161428825L;

@@ -1,4 +1,4 @@
-package io.shockah.util;
+package pl.shockah.util;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import io.shockah.util.func.Action1;
-import io.shockah.util.func.Action2;
-import io.shockah.util.func.Action3;
-import io.shockah.util.func.Func1;
+import pl.shockah.util.func.Action1;
+import pl.shockah.util.func.Action2;
+import pl.shockah.util.func.Action3;
+import pl.shockah.util.func.Func1;
 
 public class ReadWriteMap<K, V> implements Map<K, V> {
 	protected final Map<K, V> map;

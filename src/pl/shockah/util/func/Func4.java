@@ -1,4 +1,4 @@
-package io.shockah.util.func;
+package pl.shockah.util.func;
 
 @FunctionalInterface
 public interface Func4<T1, T2, T3, T4, R> {

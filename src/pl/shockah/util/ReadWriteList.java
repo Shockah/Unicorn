@@ -1,4 +1,4 @@
-package io.shockah.util;
+package pl.shockah.util;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import io.shockah.util.func.Action1;
-import io.shockah.util.func.Action2;
-import io.shockah.util.func.Func1;
+import pl.shockah.util.func.Action1;
+import pl.shockah.util.func.Action2;
+import pl.shockah.util.func.Func1;
 
 public class ReadWriteList<T> implements List<T> {
 	protected final List<T> list;
