@@ -3,7 +3,42 @@
   <groupId>pl.shockah</groupId>
   <artifactId>pl.shockah.util</artifactId>
   <version>1.0</version>
+  <packaging>jar</packaging>
+
   <name>pl.shockah.util</name>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <issueManagement>
+    <url>https://github.com/Shockah/pl.shockah.util/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+ 
+  <scm>
+    <url>https://github.com/Shockah/pl.shockah.util</url>
+    <connection>scm:git:git://github.com/Shockah/pl.shockah.util.git</connection>
+    <developerConnection>scm:git:git@github.com:Shockah/pl.shockah.util.git</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <email>lolshockah@gmail.com</email>
+      <name>Michał Dolaś</name>
+      <url>https://github.com/Shockah</url>
+      <id>Shockah</id>
+    </developer>
+  </developers>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -31,6 +66,7 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
