@@ -24,7 +24,6 @@
     <url>https://github.com/Shockah/pl.shockah.util</url>
     <connection>scm:git:git://github.com/Shockah/pl.shockah.util.git</connection>
     <developerConnection>scm:git:git@github.com:Shockah/pl.shockah.util.git</developerConnection>
-    <tag>HEAD</tag>
   </scm>
 
   <developers>
