@@ -3,7 +3,7 @@
 
   <groupId>pl.shockah</groupId>
   <artifactId>pl.shockah.util</artifactId>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <name>pl.shockah.util</name>
   <!--<description></description>-->
   <url>https://github.com/Shockah/pl.shockah.util</url>
