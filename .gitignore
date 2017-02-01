@@ -1,4 +1,4 @@
 /bin/
 /target/
-*.log
-pom.xml.releaseBackup
+/build/
+/.gradle/
