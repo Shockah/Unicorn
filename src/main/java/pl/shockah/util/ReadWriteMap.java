@@ -4,218 +4,132 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pl.shockah.util.func.Action1;
 import pl.shockah.util.func.Action2;
 import pl.shockah.util.func.Action3;
 import pl.shockah.util.func.Func1;
 
-public class ReadWriteMap<K, V> implements Map<K, V> {
-	protected final Map<K, V> map;
-	protected final ReentrantReadWriteLock lock;
-	
+public class ReadWriteMap<K, V> extends ReadWriteObject<Map<K, V>> implements Map<K, V> {
 	public ReadWriteMap(Map<K, V> underlyingMap) {
-		this(underlyingMap, true);
+		super(underlyingMap);
 	}
 	
 	public ReadWriteMap(Map<K, V> underlyingMap, boolean fair) {
-		map = underlyingMap;
-		lock = new ReentrantReadWriteLock(fair);
+		super(underlyingMap, fair);
 	}
 	
-	public void readOperation(Action1<Map<K, V>> f) {
-		lock.readLock().lock();
-		try {
-			f.call(Collections.unmodifiableMap(map));
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-	
-	public <R> R readOperation(Func1<Map<K, V>, R> f) {
-		lock.readLock().lock();
-		try {
-			return f.call(Collections.unmodifiableMap(map));
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-	
-	public boolean tryReadOperation(long timeout, TimeUnit unit, Action1<Map<K, V>> f) throws InterruptedException {
-		if (lock.readLock().tryLock(timeout, unit)) {
-			try {
-				f.call(Collections.unmodifiableMap(map));
-			} finally {
-				lock.readLock().unlock();
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	public void writeOperation(Action1<Map<K, V>> f) {
-		lock.writeLock().lock();
-		try {
-			f.call(map);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-	
-	public <R> R writeOperation(Func1<Map<K, V>, R> f) {
-		lock.writeLock().lock();
-		try {
-			return f.call(map);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-	
-	public boolean tryWriteOperation(long timeout, TimeUnit unit, Action1<Map<K, V>> f) throws InterruptedException {
-		if (lock.writeLock().tryLock(timeout, unit)) {
-			try {
-				f.call(map);
-			} finally {
-				lock.writeLock().unlock();
-			}
-			return true;
-		}
-		return false;
+	@Override
+	protected Map<K, V> prepareForRead() {
+		return Collections.unmodifiableMap(super.prepareForRead());
 	}
 	
 	public void iterate(Action2<K, V> f) {
-		lock.readLock().lock();
-		try {
+		readOperation(map -> {
 			for (Map.Entry<K, V> entry : map.entrySet()) {
 				f.call(entry.getKey(), entry.getValue());
 			}
-		} finally {
-			lock.readLock().unlock();
-		}
+		});
 	}
 	
 	public void iterateKeys(Action1<K> f) {
-		lock.readLock().lock();
-		try {
+		readOperation(map -> {
 			for (Map.Entry<K, V> entry : map.entrySet()) {
 				f.call(entry.getKey());
 			}
-		} finally {
-			lock.readLock().unlock();
-		}
+		});
 	}
 	
 	public void iterateValues(Action1<V> f) {
-		lock.readLock().lock();
-		try {
+		readOperation(map -> {
 			for (Map.Entry<K, V> entry : map.entrySet()) {
 				f.call(entry.getValue());
 			}
-		} finally {
-			lock.readLock().unlock();
-		}
+		});
 	}
 	
 	public void iterate(Action3<K, V, ReadIterator<K, V>> f) {
-		lock.readLock().lock();
-		try {
+		readOperation(map -> {
 			new ReadIterator<K, V>(map.entrySet()).iterate(f);
-		} finally {
-			lock.readLock().unlock();
-		}
+		});
 	}
 	
 	public V findOne(Func1<V, Boolean> f) {
-		lock.readLock().lock();
-		try {
+		return readOperation(map -> {
 			for (V value : map.values()) {
 				if (f.call(value))
 					return value;
 			}
-		} finally {
-			lock.readLock().unlock();
-		}
-		return null;
+			return null;
+		});
 	}
 	
 	public void iterateAndWrite(Action3<K, V, WriteIterator<K, V>> f) {
-		lock.writeLock().lock();
-		try {
+		writeOperation(map -> {
 			new WriteIterator<K, V>(map.entrySet()).iterate(f);
-		} finally {
-			lock.writeLock().unlock();
-		}
+		});
 	}
 	
 	@Override
 	public int size() {
-		lock.readLock().lock();
-		int ret = map.size();
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(map -> {
+			return map.size();
+		});
 	}
 
 	@Override
 	public boolean isEmpty() {
-		lock.readLock().lock();
-		boolean ret = map.isEmpty();
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(map -> {
+			return map.isEmpty();
+		});
 	}
 
 	@Override
 	public boolean containsKey(Object key) {
-		lock.readLock().lock();
-		boolean ret = map.containsKey(key);
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(map -> {
+			return map.containsKey(key);
+		});
 	}
 
 	@Override
 	public boolean containsValue(Object value) {
-		lock.readLock().lock();
-		boolean ret = map.containsValue(value);
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(map -> {
+			return map.containsValue(value);
+		});
 	}
 
 	@Override
 	public V get(Object key) {
-		lock.readLock().lock();
-		V ret = map.get(key);
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(map -> {
+			return map.get(key);
+		});
 	}
 
 	@Override
 	public V put(K key, V value) {
-		lock.writeLock().lock();
-		V ret = map.put(key, value);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(map -> {
+			return map.put(key, value);
+		});
 	}
 
 	@Override
 	public V remove(Object key) {
-		lock.writeLock().lock();
-		V ret = map.remove(key);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(map -> {
+			return map.remove(key);
+		});
 	}
 
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
-		lock.writeLock().lock();
-		map.putAll(m);
-		lock.writeLock().unlock();
+		writeOperation(map -> {
+			map.putAll(m);
+		});
 	}
 
 	@Override
 	public void clear() {
-		lock.writeLock().lock();
-		map.clear();
-		lock.writeLock().unlock();
+		writeOperation(map -> {
+			map.clear();
+		});
 	}
 
 	@Override
@@ -229,7 +143,7 @@ public class ReadWriteMap<K, V> implements Map<K, V> {
 	}
 
 	@Override
-	public Set<java.util.Map.Entry<K, V>> entrySet() {
+	public Set<Map.Entry<K, V>> entrySet() {
 		throw new UnsupportedOperationException();
 	}
 	

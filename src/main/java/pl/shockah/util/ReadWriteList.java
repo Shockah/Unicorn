@@ -5,164 +5,85 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pl.shockah.util.func.Action1;
 import pl.shockah.util.func.Action2;
 import pl.shockah.util.func.Func1;
 
-public class ReadWriteList<T> implements List<T> {
-	protected final List<T> list;
-	protected final ReentrantReadWriteLock lock;
-	
+public class ReadWriteList<T> extends ReadWriteObject<List<T>> implements List<T> {
 	public ReadWriteList(List<T> underlyingList) {
-		this(underlyingList, true);
+		super(underlyingList);
 	}
 	
 	public ReadWriteList(List<T> underlyingList, boolean fair) {
-		list = underlyingList;
-		lock = new ReentrantReadWriteLock(fair);
+		super(underlyingList, fair);
 	}
 	
-	public void readOperation(Action1<List<T>> f) {
-		lock.readLock().lock();
-		try {
-			f.call(Collections.unmodifiableList(list));
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-	
-	public <R> R readOperation(Func1<List<T>, R> f) {
-		lock.readLock().lock();
-		try {
-			return f.call(Collections.unmodifiableList(list));
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-	
-	public boolean tryReadOperation(long timeout, TimeUnit unit, Action1<List<T>> f) throws InterruptedException {
-		if (lock.readLock().tryLock(timeout, unit)) {
-			try {
-				f.call(Collections.unmodifiableList(list));
-			} finally {
-				lock.readLock().unlock();
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	public void writeOperation(Action1<List<T>> f) {
-		lock.writeLock().lock();
-		try {
-			f.call(list);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-	
-	public <R> R writeOperation(Func1<List<T>, R> f) {
-		lock.writeLock().lock();
-		try {
-			return f.call(list);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-	
-	public boolean tryWriteOperation(long timeout, TimeUnit unit, Action1<List<T>> f) throws InterruptedException {
-		if (lock.writeLock().tryLock(timeout, unit)) {
-			try {
-				f.call(list);
-			} finally {
-				lock.writeLock().unlock();
-			}
-			return true;
-		}
-		return false;
+	@Override
+	protected List<T> prepareForRead() {
+		return Collections.unmodifiableList(super.prepareForRead());
 	}
 	
 	public void iterate(Action1<T> f) {
-		lock.readLock().lock();
-		try {
+		readOperation(list -> {
 			Iterator<T> iterator = list.iterator();
 			while (iterator.hasNext()) {
 				f.call(iterator.next());
 			}
-		} finally {
-			lock.readLock().unlock();
-		}
+		});
 	}
 	
 	public void iterate(Action2<T, ReadIterator<T>> f) {
-		lock.readLock().lock();
-		try {
+		readOperation(list -> {
 			new ReadIterator<T>(list.iterator()).iterate(f);
-		} finally {
-			lock.readLock().unlock();
-		}
+		});
 	}
 	
 	public T filterFirst(Func1<T, Boolean> f) {
-		lock.readLock().lock();
-		try {
+		return readOperation(list -> {
 			for (T t : list) {
 				if (f.call(t))
 					return t;
 			}
-		} finally {
-			lock.readLock().unlock();
-		}
-		return null;
+			return null;
+		});
 	}
 	
 	public <R> R firstResult(Func1<T, R> f) {
-		lock.readLock().lock();
-		try {
+		return readOperation(list -> {
 			for (T t : list) {
 				R result = f.call(t);
 				if (result != null)
 					return result;
 			}
-		} finally {
-			lock.readLock().unlock();
-		}
-		return null;
+			return null;
+		});
 	}
 	
 	public void iterateAndWrite(Action2<T, WriteIterator<T>> f) {
-		lock.writeLock().lock();
-		try {
+		writeOperation(list -> {
 			new WriteIterator<T>(list.listIterator()).iterate(f);
-		} finally {
-			lock.writeLock().unlock();
-		}
+		});
 	}
 
 	@Override
 	public int size() {
-		lock.readLock().lock();
-		int ret = list.size();
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(list -> {
+			return list.size();
+		});
 	}
 
 	@Override
 	public boolean isEmpty() {
-		lock.readLock().lock();
-		boolean ret = list.isEmpty();
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(list -> {
+			return list.isEmpty();
+		});
 	}
 
 	@Override
 	public boolean contains(Object o) {
-		lock.readLock().lock();
-		boolean ret = list.contains(o);
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(list -> {
+			return list.contains(o);
+		});
 	}
 
 	@Override
@@ -172,128 +93,114 @@ public class ReadWriteList<T> implements List<T> {
 
 	@Override
 	public Object[] toArray() {
-		lock.readLock().lock();
-		Object[] ret = list.toArray();
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(list -> {
+			return list.toArray();
+		});
 	}
 
 	@Override
 	public <R> R[] toArray(R[] a) {
-		lock.readLock().lock();
-		R[] ret = list.toArray(a);
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(list -> {
+			return list.toArray(a);
+		});
 	}
 
 	@Override
 	public boolean add(T e) {
-		lock.writeLock().lock();
-		boolean ret = list.add(e);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(list -> {
+			return list.add(e);
+		});
 	}
 
 	@Override
 	public boolean remove(Object o) {
-		lock.writeLock().lock();
-		boolean ret = list.remove(o);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(list -> {
+			return list.remove(o);
+		});
 	}
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		lock.readLock().lock();
-		boolean ret = list.containsAll(c);
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(list -> {
+			return list.containsAll(c);
+		});
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
-		lock.writeLock().lock();
-		boolean ret = list.addAll(c);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(list -> {
+			return list.addAll(c);
+		});
 	}
 
 	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
-		lock.writeLock().lock();
-		boolean ret = list.addAll(index, c);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(list -> {
+			return list.addAll(index, c);
+		});
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		lock.writeLock().lock();
-		boolean ret = list.removeAll(c);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(list -> {
+			return list.removeAll(c);
+		});
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		lock.writeLock().lock();
-		boolean ret = list.retainAll(c);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(list -> {
+			return list.retainAll(c);
+		});
 	}
 
 	@Override
 	public void clear() {
-		lock.writeLock().lock();
-		list.clear();
-		lock.writeLock().unlock();
+		writeOperation(list -> {
+			list.clear();
+		});
 	}
 
 	@Override
 	public T get(int index) {
-		lock.readLock().lock();
-		T ret = list.get(index);
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(list -> {
+			return list.get(index);
+		});
 	}
 
 	@Override
 	public T set(int index, T element) {
-		lock.writeLock().lock();
-		T ret = list.set(index, element);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(list -> {
+			return list.set(index, element);
+		});
 	}
 
 	@Override
 	public void add(int index, T element) {
-		lock.writeLock().lock();
-		list.add(index, element);
-		lock.writeLock().unlock();
+		writeOperation(list -> {
+			list.add(index, element);
+		});
 	}
 
 	@Override
 	public T remove(int index) {
-		lock.writeLock().lock();
-		T ret = list.remove(index);
-		lock.writeLock().unlock();
-		return ret;
+		return writeOperation(list -> {
+			return list.remove(index);
+		});
 	}
 
 	@Override
 	public int indexOf(Object o) {
-		lock.readLock().lock();
-		int ret = list.indexOf(o);
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(list -> {
+			return list.indexOf(o);
+		});
 	}
 
 	@Override
 	public int lastIndexOf(Object o) {
-		lock.readLock().lock();
-		int ret = list.lastIndexOf(o);
-		lock.readLock().unlock();
-		return ret;
+		return readOperation(list -> {
+			return list.lastIndexOf(o);
+		});
 	}
 
 	@Override
