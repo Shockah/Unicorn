@@ -157,11 +157,11 @@ public class ReadWriteSet<T> extends ReadWriteObject<Set<T>> implements Set<T> {
 		protected final Iterator<T> iterator;
 		protected boolean shouldStop = false;
 		
-		private ReadIterator(Iterator<T> iterator) {
+		public ReadIterator(Iterator<T> iterator) {
 			this.iterator = iterator;
 		}
 		
-		private void iterate(Action2<T, ReadIterator<T>> f) {
+		public void iterate(Action2<T, ReadIterator<T>> f) {
 			while (!shouldStop && iterator.hasNext()) {
 				f.call(iterator.next(), this);
 			}
@@ -176,11 +176,11 @@ public class ReadWriteSet<T> extends ReadWriteObject<Set<T>> implements Set<T> {
 		private final Iterator<T> iterator;
 		protected boolean shouldStop = false;
 		
-		private WriteIterator(Iterator<T> iterator) {
+		public WriteIterator(Iterator<T> iterator) {
 			this.iterator = iterator;
 		}
 		
-		private void iterate(Action2<T, WriteIterator<T>> f) {
+		public void iterate(Action2<T, WriteIterator<T>> f) {
 			while (!shouldStop && iterator.hasNext()) {
 				f.call(iterator.next(), this);
 			}
