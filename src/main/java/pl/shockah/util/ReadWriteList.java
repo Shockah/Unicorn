@@ -24,7 +24,7 @@ public class ReadWriteList<T> extends ReadWriteObject<List<T>> implements List<T
 	}
 	
 	public void iterate(Action1<T> f) {
-		readOperation(list -> {
+		readOperation((List<T> list) -> {
 			Iterator<T> iterator = list.iterator();
 			while (iterator.hasNext()) {
 				f.call(iterator.next());

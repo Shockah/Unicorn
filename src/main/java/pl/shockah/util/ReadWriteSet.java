@@ -23,7 +23,7 @@ public class ReadWriteSet<T> extends ReadWriteObject<Set<T>> implements Set<T> {
 	}
 	
 	public void iterate(Action1<T> f) {
-		readOperation(set -> {
+		readOperation((Set<T> set) -> {
 			Iterator<T> iterator = set.iterator();
 			while (iterator.hasNext()) {
 				f.call(iterator.next());
