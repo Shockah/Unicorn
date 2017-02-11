@@ -152,11 +152,11 @@ public class ReadWriteMap<K, V> extends ReadWriteObject<Map<K, V>> implements Ma
 		protected boolean shouldStop = false;
 		protected Map.Entry<K, V> currentEntry;
 		
-		private ReadIterator(Set<Map.Entry<K, V>> set) {
+		public ReadIterator(Set<Map.Entry<K, V>> set) {
 			this.set = set;
 		}
 		
-		private void iterate(Action3<K, V, ReadIterator<K, V>> f) {
+		public void iterate(Action3<K, V, ReadIterator<K, V>> f) {
 			for (Map.Entry<K, V> entry : set) {
 				currentEntry = entry;
 				f.call(entry.getKey(), entry.getValue(), this);
@@ -170,18 +170,26 @@ public class ReadWriteMap<K, V> extends ReadWriteObject<Map<K, V>> implements Ma
 		}
 	}
 	
-	public static class WriteIterator<K, V> extends ReadIterator<K, V> {
-		private WriteIterator(Set<Map.Entry<K, V>> set) {
-			super(set);
+	public static class WriteIterator<K, V> {
+		protected final Set<Map.Entry<K, V>> set;
+		protected boolean shouldStop = false;
+		protected Map.Entry<K, V> currentEntry;
+		
+		public WriteIterator(Set<Map.Entry<K, V>> set) {
+			this.set = set;
 		}
 		
-		private void iterate(Action3<K, V, WriteIterator<K, V>> f) {
+		public void iterate(Action3<K, V, WriteIterator<K, V>> f) {
 			for (Map.Entry<K, V> entry : set) {
 				currentEntry = entry;
 				f.call(entry.getKey(), entry.getValue(), this);
 				if (shouldStop)
 					break;
 			}
+		}
+		
+		public void stop() {
+			shouldStop = true;
 		}
 		
 		public void set(V value) {

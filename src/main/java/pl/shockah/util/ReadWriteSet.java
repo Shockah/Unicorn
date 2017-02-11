@@ -172,11 +172,11 @@ public class ReadWriteSet<T> extends ReadWriteObject<Set<T>> implements Set<T> {
 		}
 	}
 	
-	public static class WriteIterator<T> extends ReadIterator<T> {
+	public static class WriteIterator<T> {
 		private final Iterator<T> iterator;
+		protected boolean shouldStop = false;
 		
 		private WriteIterator(Iterator<T> iterator) {
-			super(iterator);
 			this.iterator = iterator;
 		}
 		
@@ -184,6 +184,10 @@ public class ReadWriteSet<T> extends ReadWriteObject<Set<T>> implements Set<T> {
 			while (!shouldStop && iterator.hasNext()) {
 				f.call(iterator.next(), this);
 			}
+		}
+		
+		public void stop() {
+			shouldStop = true;
 		}
 		
 		public void remove() {

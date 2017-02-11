@@ -222,11 +222,11 @@ public class ReadWriteList<T> extends ReadWriteObject<List<T>> implements List<T
 		protected final Iterator<T> iterator;
 		protected boolean shouldStop = false;
 		
-		private ReadIterator(Iterator<T> iterator) {
+		public ReadIterator(Iterator<T> iterator) {
 			this.iterator = iterator;
 		}
 		
-		private void iterate(Action2<T, ReadIterator<T>> f) {
+		public void iterate(Action2<T, ReadIterator<T>> f) {
 			while (!shouldStop && iterator.hasNext()) {
 				f.call(iterator.next(), this);
 			}
@@ -237,18 +237,22 @@ public class ReadWriteList<T> extends ReadWriteObject<List<T>> implements List<T
 		}
 	}
 	
-	public static class WriteIterator<T> extends ReadIterator<T> {
+	public static class WriteIterator<T> {
 		private final ListIterator<T> listIterator;
+		protected boolean shouldStop = false;
 		
-		private WriteIterator(ListIterator<T> iterator) {
-			super(iterator);
+		public WriteIterator(ListIterator<T> iterator) {
 			listIterator = iterator;
 		}
 		
-		private void iterate(Action2<T, WriteIterator<T>> f) {
-			while (!shouldStop && iterator.hasNext()) {
-				f.call(iterator.next(), this);
+		public void iterate(Action2<T, WriteIterator<T>> f) {
+			while (!shouldStop && listIterator.hasNext()) {
+				f.call(listIterator.next(), this);
 			}
+		}
+		
+		public void stop() {
+			shouldStop = true;
 		}
 		
 		public void add(T e) {
