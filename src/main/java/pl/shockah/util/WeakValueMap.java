@@ -102,20 +102,21 @@ public class WeakValueMap<K, V> implements Map<K, V> {
 		cleanup();
 		Set<Entry<K, V>> entries = new LinkedHashSet<>();
 		for (Entry<K, WeakReference<V>> entry : map.entrySet()) {
+			final Entry<K, WeakReference<V>> f_entry = entry;
 			entries.add(new Entry<K, V>() {
 				@Override
 				public K getKey() {
-					return entry.getKey();
+					return f_entry.getKey();
 				}
 
 				@Override
 				public V getValue() {
-					return entry.getValue().get();
+					return f_entry.getValue().get();
 				}
 
 				@Override
 				public V setValue(V value) {
-					return entry.setValue(new WeakReference<>(value)).get();
+					return f_entry.setValue(new WeakReference<>(value)).get();
 				}
 
 				@Override
@@ -130,7 +131,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
 
 				@Override
 				public int hashCode() {
-					return entry.hashCode();
+					return f_entry.hashCode();
 				}
 			});
 		}
