@@ -1,3 +1,3 @@
-# pl.shockah.util
+# Unicorn
 
 Just a small utility library.
