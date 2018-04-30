@@ -1,7 +1,9 @@
 package pl.shockah.unicorn;
 
+import lombok.EqualsAndHashCode;
 import pl.shockah.unicorn.func.Action1;
 
+@EqualsAndHashCode
 public final class Box<E> {
 	public E value;
 	
@@ -15,21 +17,6 @@ public final class Box<E> {
 	
 	public static <E> Box<E> of(E value) {
 		return new Box<>(value);
-	}
-	
-	@Override
-	public int hashCode() {
-		return value != null ? value.hashCode() : 0;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Box<?>))
-			return false;
-		Box<?> box = (Box<?>)obj;
-		if (value == null)
-			return box.value == null;
-		return value.equals(box.value);
 	}
 	
 	@Override

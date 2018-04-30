@@ -1,12 +1,20 @@
 package pl.shockah.unicorn;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 public class WeakValueMap<K, V> implements Map<K, V> {
-	protected final Map<K, WeakReference<V>> map;
+	@Nonnull protected final Map<K, WeakReference<V>> map;
 
-	public WeakValueMap(Map<K, WeakReference<V>> underlyingMap) {
+	public WeakValueMap(@Nonnull Map<K, WeakReference<V>> underlyingMap) {
 		map = underlyingMap;
 	}
 
@@ -58,7 +66,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
 	public V put(K key, V value) {
 		if (value == null)
 			return null;
-		WeakReference<V> ref = map.put(key, new WeakReference<V>(value));
+		WeakReference<V> ref = map.put(key, new WeakReference<>(value));
 		return ref == null ? null : ref.get();
 	}
 
@@ -81,13 +89,13 @@ public class WeakValueMap<K, V> implements Map<K, V> {
 	}
 
 	@Override
-	public Set<K> keySet() {
+	@Nonnull public Set<K> keySet() {
 		cleanup();
 		return map.keySet();
 	}
 
 	@Override
-	public Collection<V> values() {
+	@Nonnull public Collection<V> values() {
 		cleanup();
 		List<V> values = new ArrayList<>(map.size());
 		for (WeakReference<V> ref : map.values()) {
@@ -98,7 +106,7 @@ public class WeakValueMap<K, V> implements Map<K, V> {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Set<Entry<K, V>> entrySet() {
+	@Nonnull public Set<Entry<K, V>> entrySet() {
 		cleanup();
 		Set<Entry<K, V>> entries = new LinkedHashSet<>();
 		for (Entry<K, WeakReference<V>> entry : map.entrySet()) {
