@@ -1,1 +1,1 @@
-include 'core', 'func', 'collection', 'ease', 'colorspace', 'files'
+include 'core', 'func', 'collection', 'ease', 'colorspace', 'files', 'operation', 'algorithm'
