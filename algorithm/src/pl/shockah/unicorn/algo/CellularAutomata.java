@@ -12,7 +12,7 @@ public class CellularAutomata extends AbstractOperation<BooleanArray2D, BooleanA
 	public final boolean outOfBoundsValue;
 
 	public CellularAutomata(@Nonnull BasicRule2 rule, int iterations, boolean outOfBoundsValue) {
-		this((int x, int y, int neighbors) -> rule.getNewState(neighbors), iterations, outOfBoundsValue);
+		this((int x, int y, boolean previous, int neighbors) -> rule.getNewState(previous, neighbors), iterations, outOfBoundsValue);
 	}
 
 	public CellularAutomata(@Nonnull BasicRule rule, int iterations, boolean outOfBoundsValue) {
@@ -26,7 +26,7 @@ public class CellularAutomata extends AbstractOperation<BooleanArray2D, BooleanA
 						neighbors++;
 				}
 			}
-			return rule.getNewState(x, y, neighbors);
+			return rule.getNewState(x, y, grid.get(x, y), neighbors);
 		}, iterations, outOfBoundsValue);
 	}
 
@@ -77,10 +77,10 @@ public class CellularAutomata extends AbstractOperation<BooleanArray2D, BooleanA
 	}
 
 	public interface BasicRule {
-		boolean getNewState(int x, int y, int neighbors);
+		boolean getNewState(int x, int y, boolean previous, int neighbors);
 	}
 
 	public interface BasicRule2 {
-		boolean getNewState(int neighbors);
+		boolean getNewState(boolean previous, int neighbors);
 	}
 }
