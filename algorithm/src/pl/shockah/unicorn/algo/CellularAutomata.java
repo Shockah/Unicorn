@@ -11,22 +11,30 @@ public class CellularAutomata extends AbstractOperation<BooleanArray2D, BooleanA
 	public final int iterations;
 	public final boolean outOfBoundsValue;
 
-	public CellularAutomata(@Nonnull BasicRule2 rule, int iterations, boolean outOfBoundsValue) {
-		this((int x, int y, boolean previous, int neighbors) -> rule.getNewState(previous, neighbors), iterations, outOfBoundsValue);
+	public CellularAutomata(@Nonnull final BasicRule2 rule, int iterations, boolean outOfBoundsValue) {
+		this(new BasicRule() {
+			@Override
+			public boolean getNewState(int x, int y, boolean previous, int neighbors) {
+				return rule.getNewState(previous, neighbors);
+			}
+		}, iterations, outOfBoundsValue);
 	}
 
-	public CellularAutomata(@Nonnull BasicRule rule, int iterations, boolean outOfBoundsValue) {
-		this((int x, int y, Grid grid) -> {
-			int neighbors = 0;
-			for (int yy = -1; yy <= 1; yy++) {
-				for (int xx = -1; xx <= 1; xx++) {
-					if (xx == 0 && yy == 0)
-						continue;
-					if (grid.get(x + xx, y + yy))
-						neighbors++;
+	public CellularAutomata(@Nonnull final BasicRule rule, int iterations, boolean outOfBoundsValue) {
+		this(new Rule() {
+			@Override
+			public boolean getNewState(int x, int y, @Nonnull Grid grid) {
+				int neighbors = 0;
+				for (int yy = -1; yy <= 1; yy++) {
+					for (int xx = -1; xx <= 1; xx++) {
+						if (xx == 0 && yy == 0)
+							continue;
+						if (grid.get(x + xx, y + yy))
+							neighbors++;
+					}
 				}
+				return rule.getNewState(x, y, grid.get(x, y), neighbors);
 			}
-			return rule.getNewState(x, y, grid.get(x, y), neighbors);
 		}, iterations, outOfBoundsValue);
 	}
 
