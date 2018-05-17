@@ -1,4 +1,4 @@
-package pl.shockah.unicorn;
+package pl.shockah.unicorn.collection;
 
 import lombok.EqualsAndHashCode;
 import pl.shockah.unicorn.func.Action1;

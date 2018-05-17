@@ -1,7 +1,7 @@
 package pl.shockah.unicorn.algo;
 
-import pl.shockah.unicorn.BooleanArray2D;
-import pl.shockah.unicorn.MutableBooleanArray2D;
+import pl.shockah.unicorn.collection.BooleanArray2D;
+import pl.shockah.unicorn.collection.MutableBooleanArray2D;
 import pl.shockah.unicorn.operation.AbstractOperation;
 
 import javax.annotation.Nonnull;

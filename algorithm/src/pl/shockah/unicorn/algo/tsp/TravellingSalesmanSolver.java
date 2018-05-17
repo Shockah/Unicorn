@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import java8.util.Maps;
 import java8.util.function.Function;
 import lombok.Getter;
-import pl.shockah.unicorn.UnorderedPair;
+import pl.shockah.unicorn.collection.UnorderedPair;
 import pl.shockah.unicorn.algo.DistanceAlgorithm;
 import pl.shockah.unicorn.algo.EuclideanDistanceAlgorithm;
 import pl.shockah.unicorn.func.Func1;

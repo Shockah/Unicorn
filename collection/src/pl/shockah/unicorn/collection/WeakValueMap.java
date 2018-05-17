@@ -1,4 +1,4 @@
-package pl.shockah.unicorn;
+package pl.shockah.unicorn.collection;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

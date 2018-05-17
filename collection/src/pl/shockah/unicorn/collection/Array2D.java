@@ -1,27 +1,30 @@
-package pl.shockah.unicorn;
+package pl.shockah.unicorn.collection;
 
-import lombok.EqualsAndHashCode;
+import java.lang.reflect.Array;
 
 import javax.annotation.Nonnull;
 
+import lombok.EqualsAndHashCode;
+
 @EqualsAndHashCode
-public class BooleanArray2D {
+public class Array2D<T> {
 	public final int width;
 	public final int height;
 	public final int length;
 
-	@Nonnull protected final boolean[] array;
+	@Nonnull protected final T[] array;
 
-	public BooleanArray2D(int width, int height) {
+	@SuppressWarnings("unchecked")
+	public Array2D(@Nonnull Class<? extends T> clazz, int width, int height) {
 		this.width = width;
 		this.height = height;
 		length = width * height;
-		array = new boolean[length];
+		array = (T[])Array.newInstance(clazz, length);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("[BooleanArray2D: %dx%d]", width, height);
+		return String.format("[Array2D: %dx%d]", width, height);
 	}
 
 	protected final int getIndex(int x, int y) {
@@ -32,7 +35,7 @@ public class BooleanArray2D {
 		return y * width + x;
 	}
 
-	public boolean get(int x, int y) {
+	public T get(int x, int y) {
 		return array[getIndex(x, y)];
 	}
 }

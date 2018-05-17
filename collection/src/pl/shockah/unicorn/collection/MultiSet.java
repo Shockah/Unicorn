@@ -1,4 +1,4 @@
-package pl.shockah.unicorn;
+package pl.shockah.unicorn.collection;
 
 import java.util.Iterator;
 import java.util.Set;

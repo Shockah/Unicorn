@@ -1,4 +1,4 @@
-package pl.shockah.unicorn;
+package pl.shockah.unicorn.collection;
 
 public class MutableBooleanArray2D extends BooleanArray2D {
 	public MutableBooleanArray2D(int width, int height) {

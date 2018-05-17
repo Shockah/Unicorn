@@ -1,4 +1,4 @@
-package pl.shockah.unicorn;
+package pl.shockah.unicorn.collection;
 
 public abstract class AbstractMultiSet<E> implements MultiSet<E> {
 	@SuppressWarnings("unchecked")
