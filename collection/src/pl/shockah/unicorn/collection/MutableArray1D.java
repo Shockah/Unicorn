@@ -5,6 +5,10 @@ import java.util.Arrays;
 import javax.annotation.Nonnull;
 
 public class MutableArray1D<T> extends Array1D<T> {
+	public MutableArray1D(@Nonnull T[] javaArray) {
+		super(javaArray);
+	}
+
 	public MutableArray1D(@Nonnull Class<? extends T> clazz, int length) {
 		super(clazz, length);
 	}

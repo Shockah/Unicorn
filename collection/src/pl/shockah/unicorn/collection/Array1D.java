@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import javax.annotation.Nonnull;
 
 import lombok.EqualsAndHashCode;
+import pl.shockah.unicorn.Primitives;
 
 @EqualsAndHashCode
 public class Array1D<T> {
@@ -12,6 +13,12 @@ public class Array1D<T> {
 
 	@Nonnull
 	protected final T[] array;
+
+	@SuppressWarnings("unchecked")
+	public Array1D(@Nonnull T[] javaArray) {
+		this((Class<? extends T>)Primitives.getGenericClass(javaArray.getClass().getComponentType()), javaArray.length);
+		System.arraycopy(javaArray, 0, array, 0, javaArray.length);
+	}
 
 	@SuppressWarnings("unchecked")
 	public Array1D(@Nonnull Class<? extends T> clazz, int length) {
