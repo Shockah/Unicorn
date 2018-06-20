@@ -39,8 +39,8 @@ public class HSLuvColorSpace implements ColorSpace<HSLuvColorSpace> {
 			return new HSLuvColorSpace(lch.h, 0f, 0f);
 
 		float max = maxChromaForLH(lch.l, lch.h);
-		float S = lch.c / max;
-		return new HSLuvColorSpace(lch.h, S, lch.l);
+		float S = lch.c / max * 100;
+		return new HSLuvColorSpace(lch.h, S * 0.01f, lch.l * 0.01f);
 	}
 
 	private static float maxChromaForLH(float L, float H) {
@@ -93,9 +93,9 @@ public class HSLuvColorSpace implements ColorSpace<HSLuvColorSpace> {
 		if (l < 0.0000000001f)
 			return new LCHColorSpace(0f, 0f, h);
 
-		float max = maxChromaForLH(l, h);
+		float max = maxChromaForLH(l * 100f, h);
 		float C = max * s;
-		return new LCHColorSpace(l, C, h);
+		return new LCHColorSpace(l * 100f, C, h * 100f);
 	}
 
 	@Override
