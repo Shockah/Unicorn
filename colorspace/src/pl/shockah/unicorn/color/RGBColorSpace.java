@@ -23,7 +23,8 @@ public class RGBColorSpace implements ColorSpace<RGBColorSpace> {
 	}
 
 	@Override
-	@Nonnull public RGBColorSpace toRGB() {
+	@Nonnull
+	public RGBColorSpace toRGB() {
 		return this;
 	}
 
@@ -37,7 +38,8 @@ public class RGBColorSpace implements ColorSpace<RGBColorSpace> {
 	}
 
 	@Override
-	@Nonnull public RGBColorSpace ease(@Nonnull RGBColorSpace other, float f) {
+	@Nonnull
+	public RGBColorSpace ease(@Nonnull RGBColorSpace other, float f) {
 		return new RGBColorSpace(
 				Easing.linear.ease(r, other.r, f),
 				Easing.linear.ease(g, other.g, f),

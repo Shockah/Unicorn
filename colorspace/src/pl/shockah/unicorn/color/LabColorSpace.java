@@ -17,11 +17,13 @@ public class LabColorSpace implements ColorSpace<LabColorSpace> {
 		this.b = b;
 	}
 
-	@Nonnull public static LabColorSpace from(@Nonnull XYZColorSpace xyz) {
+	@Nonnull
+	public static LabColorSpace from(@Nonnull XYZColorSpace xyz) {
 		return from(xyz, XYZColorSpace.Reference.D65_2);
 	}
 
-	@Nonnull public static LabColorSpace from(@Nonnull XYZColorSpace xyz, @Nonnull XYZColorSpace.Reference reference) {
+	@Nonnull
+	public static LabColorSpace from(@Nonnull XYZColorSpace xyz, @Nonnull XYZColorSpace.Reference reference) {
 		float x = xyz.x / reference.x;
 		float y = xyz.y / reference.y;
 		float z = xyz.z / reference.z;
@@ -42,11 +44,13 @@ public class LabColorSpace implements ColorSpace<LabColorSpace> {
 		return String.format("[LabColorSpace: L:%.3f a:%.3f b:%.3f]", l, a, b);
 	}
 
-	@Nonnull public XYZColorSpace toXYZ() {
+	@Nonnull
+	public XYZColorSpace toXYZ() {
 		return toXYZ(XYZColorSpace.Reference.D65_2);
 	}
 
-	@Nonnull public XYZColorSpace toXYZ(@Nonnull XYZColorSpace.Reference reference) {
+	@Nonnull
+	public XYZColorSpace toXYZ(@Nonnull XYZColorSpace.Reference reference) {
 		float y = (l + 16) / 116f;
 		float x = a / 500f + y;
 		float z = y - b / 200f;
@@ -63,7 +67,8 @@ public class LabColorSpace implements ColorSpace<LabColorSpace> {
 	}
 
 	@Override
-	@Nonnull public RGBColorSpace toRGB() {
+	@Nonnull
+	public RGBColorSpace toRGB() {
 		return toXYZ().toRGB();
 	}
 
@@ -76,20 +81,24 @@ public class LabColorSpace implements ColorSpace<LabColorSpace> {
 		);
 	}
 
-	@Nonnull public RGBColorSpace toRGB(@Nonnull XYZColorSpace.Reference reference) {
+	@Nonnull
+	public RGBColorSpace toRGB(@Nonnull XYZColorSpace.Reference reference) {
 		return toXYZ(reference).toRGB();
 	}
 
-	@Nonnull public RGBColorSpace toExactRGB() {
+	@Nonnull
+	public RGBColorSpace toExactRGB() {
 		return toXYZ().toExactRGB();
 	}
 
-	@Nonnull public RGBColorSpace toExactRGB(@Nonnull XYZColorSpace.Reference reference) {
+	@Nonnull
+	public RGBColorSpace toExactRGB(@Nonnull XYZColorSpace.Reference reference) {
 		return toXYZ(reference).toExactRGB();
 	}
 
 	@Override
-	@Nonnull public LabColorSpace ease(@Nonnull LabColorSpace other, float f) {
+	@Nonnull
+	public LabColorSpace ease(@Nonnull LabColorSpace other, float f) {
 		return new LabColorSpace(
 				Easing.linear.ease(l, other.l, f),
 				Easing.linear.ease(a, other.a, f),

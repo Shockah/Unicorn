@@ -36,11 +36,13 @@ public class XYZColorSpace implements ColorSpace<XYZColorSpace> {
 		this.z = z;
 	}
 
-	@Nonnull public static XYZColorSpace from(@Nonnull RGBColorSpace rgb) {
+	@Nonnull
+	public static XYZColorSpace from(@Nonnull RGBColorSpace rgb) {
 		return from(rgb.r, rgb.g, rgb.b);
 	}
 
-	@Nonnull public static XYZColorSpace from(float r, float g, float b) {
+	@Nonnull
+	public static XYZColorSpace from(float r, float g, float b) {
 		r = r > 0.04045f ? (float)Math.pow((r + 0.055f) / 1.055f, 2.4f) : r / 12.92f;
 		g = g > 0.04045f ? (float)Math.pow((g + 0.055f) / 1.055f, 2.4f) : g / 12.92f;
 		b = b > 0.04045f ? (float)Math.pow((b + 0.055f) / 1.055f, 2.4f) : b / 12.92f;
@@ -62,7 +64,8 @@ public class XYZColorSpace implements ColorSpace<XYZColorSpace> {
 	}
 
 	@Override
-	@Nonnull public RGBColorSpace toRGB() {
+	@Nonnull
+	public RGBColorSpace toRGB() {
 		float x = this.x / 100;
 		float y = this.y / 100;
 		float z = this.z / 100;
@@ -87,7 +90,8 @@ public class XYZColorSpace implements ColorSpace<XYZColorSpace> {
 		);
 	}
 
-	@Nonnull public RGBColorSpace toExactRGB() {
+	@Nonnull
+	public RGBColorSpace toExactRGB() {
 		RGBColorSpace rgb = toRGB();
 		if (rgb.r < 0 || rgb.r > 1)
 			throw new IllegalArgumentException("Cannot convert to RGB - R outside the 0-1 bounds.");
@@ -99,7 +103,8 @@ public class XYZColorSpace implements ColorSpace<XYZColorSpace> {
 	}
 
 	@Override
-	@Nonnull public XYZColorSpace ease(@Nonnull XYZColorSpace other, float f) {
+	@Nonnull
+	public XYZColorSpace ease(@Nonnull XYZColorSpace other, float f) {
 		return new XYZColorSpace(
 				Easing.linear.ease(x, other.x, f),
 				Easing.linear.ease(y, other.y, f),
