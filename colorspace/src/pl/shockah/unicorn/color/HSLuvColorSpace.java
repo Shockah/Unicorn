@@ -33,18 +33,18 @@ public class HSLuvColorSpace implements ColorSpace<HSLuvColorSpace> {
 
 	@Nonnull
 	public static HSLuvColorSpace from(@Nonnull LCHColorSpace lch) {
-		if (lch.l > 99.9999999f)
-			return new HSLuvColorSpace(lch.h, 0, 100);
-		if (lch.l < 0.00000001f)
-			return new HSLuvColorSpace(lch.h, 0, 0);
+		if (lch.l > 0.999999999f)
+			return new HSLuvColorSpace(lch.h, 0f, 1f);
+		if (lch.l < 0.0000000001f)
+			return new HSLuvColorSpace(lch.h, 0f, 0f);
 
 		float max = maxChromaForLH(lch.l, lch.h);
-		float S = lch.c / max * 100;
+		float S = lch.c / max;
 		return new HSLuvColorSpace(lch.h, S, lch.l);
 	}
 
 	private static float maxChromaForLH(float L, float H) {
-		float hrad = (float)(H / 360 * Math.PI * 2);
+		float hrad = (float)(H / 360f * Math.PI * 2f);
 
 		List<float[]> bounds = getBounds(L);
 		float min = Float.MAX_VALUE;
@@ -88,13 +88,13 @@ public class HSLuvColorSpace implements ColorSpace<HSLuvColorSpace> {
 
 	@Nonnull
 	public LCHColorSpace toLCH() {
-		if (l > 99.9999999f)
-			return new LCHColorSpace(100f, 0f, h);
-		if (l < 0.00000001f)
+		if (l > 0.999999999f)
+			return new LCHColorSpace(1f, 0f, h);
+		if (l < 0.0000000001f)
 			return new LCHColorSpace(0f, 0f, h);
 
 		float max = maxChromaForLH(l, h);
-		float C = max / 100 * s;
+		float C = max * s;
 		return new LCHColorSpace(l, C, h);
 	}
 
@@ -136,7 +136,7 @@ public class HSLuvColorSpace implements ColorSpace<HSLuvColorSpace> {
 	@Override
 	@Nonnull
 	public HSLuvColorSpace ease(@Nonnull HSLuvColorSpace other, float f) {
-		float h2 = Math2.deltaAngle(this.h, other.h) >= 0 ? other.h : other.h - 1f;
+		float h2 = Math2.deltaAngle(this.h * 360f, other.h * 360f) >= 0 ? other.h : other.h - 1f;
 		float h = Easing.linear.ease(this.h, h2, f);
 		if (h < 0)
 			h += 1f;
