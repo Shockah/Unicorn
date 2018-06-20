@@ -95,7 +95,7 @@ public class HSLuvColorSpace implements ColorSpace<HSLuvColorSpace> {
 
 		float max = maxChromaForLH(l * 100f, h);
 		float C = max * s;
-		return new LCHColorSpace(l * 100f, C, h * 100f);
+		return new LCHColorSpace(l * 100f, C, h);
 	}
 
 	@Override
