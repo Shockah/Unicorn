@@ -18,11 +18,13 @@ public class HSLColorSpace implements ColorSpace<HSLColorSpace> {
 		this.l = l;
 	}
 
-	@Nonnull public static HSLColorSpace from(@Nonnull RGBColorSpace rgb) {
+	@Nonnull
+	public static HSLColorSpace from(@Nonnull RGBColorSpace rgb) {
 		return from(rgb.r, rgb.g, rgb.b);
 	}
 
-	@Nonnull public static HSLColorSpace from(float r, float g, float b) {
+	@Nonnull
+	public static HSLColorSpace from(float r, float g, float b) {
 		float max = Math2.max(r, g, b);
 		float min = Math2.min(r, g, b);
 		float range = max - min;
@@ -61,7 +63,8 @@ public class HSLColorSpace implements ColorSpace<HSLColorSpace> {
 	}
 
 	@Override
-	@Nonnull public RGBColorSpace toRGB() {
+	@Nonnull
+	public RGBColorSpace toRGB() {
 		if (s == 0)
 			return new RGBColorSpace(l, l, l);
 
@@ -99,7 +102,8 @@ public class HSLColorSpace implements ColorSpace<HSLColorSpace> {
 	}
 
 	@Override
-	@Nonnull public HSLColorSpace ease(@Nonnull HSLColorSpace other, float f) {
+	@Nonnull
+	public HSLColorSpace ease(@Nonnull HSLColorSpace other, float f) {
 		float h2 = Math2.deltaAngle(this.h, other.h) >= 0 ? other.h : other.h - 1f;
 		float h = Easing.linear.ease(this.h, h2, f);
 		if (h < 0)

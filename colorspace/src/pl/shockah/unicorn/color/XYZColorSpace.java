@@ -3,6 +3,7 @@ package pl.shockah.unicorn.color;
 import javax.annotation.Nonnull;
 
 import lombok.EqualsAndHashCode;
+import pl.shockah.unicorn.Math2;
 import pl.shockah.unicorn.ease.Easing;
 
 @EqualsAndHashCode
@@ -36,11 +37,13 @@ public class XYZColorSpace implements ColorSpace<XYZColorSpace> {
 		this.z = z;
 	}
 
-	@Nonnull public static XYZColorSpace from(@Nonnull RGBColorSpace rgb) {
+	@Nonnull
+	public static XYZColorSpace from(@Nonnull RGBColorSpace rgb) {
 		return from(rgb.r, rgb.g, rgb.b);
 	}
 
-	@Nonnull public static XYZColorSpace from(float r, float g, float b) {
+	@Nonnull
+	public static XYZColorSpace from(float r, float g, float b) {
 		r = r > 0.04045f ? (float)Math.pow((r + 0.055f) / 1.055f, 2.4f) : r / 12.92f;
 		g = g > 0.04045f ? (float)Math.pow((g + 0.055f) / 1.055f, 2.4f) : g / 12.92f;
 		b = b > 0.04045f ? (float)Math.pow((b + 0.055f) / 1.055f, 2.4f) : b / 12.92f;
@@ -61,8 +64,8 @@ public class XYZColorSpace implements ColorSpace<XYZColorSpace> {
 		return String.format("[XYZColorSpace: X:%.3f Y:%.3f Z:%.3f]", x, y, z);
 	}
 
-	@Override
-	@Nonnull public RGBColorSpace toRGB() {
+	@Nonnull
+	private RGBColorSpace internalToRGB(boolean clamp, boolean rangeException) {
 		float x = this.x / 100;
 		float y = this.y / 100;
 		float z = this.z / 100;
@@ -75,7 +78,26 @@ public class XYZColorSpace implements ColorSpace<XYZColorSpace> {
 		g = g > 0.0031308f ? 1.055f * (float)Math.pow(g, 1f / 2.4f) - 0.055f : g * 12.92f;
 		b = b > 0.0031308f ? 1.055f * (float)Math.pow(b, 1f / 2.4f) - 0.055f : b * 12.92f;
 
+		if (clamp) {
+			r = Math2.clamp(r, 0f, 1f);
+			g = Math2.clamp(g, 0f, 1f);
+			b = Math2.clamp(b, 0f, 1f);
+		} else if (rangeException) {
+			if (r < 0f || r > 1f)
+				throw new IllegalArgumentException("Cannot convert to RGB - R outside the 0-1 bounds.");
+			if (g < 0f || g > 1f)
+				throw new IllegalArgumentException("Cannot convert to RGB - R outside the 0-1 bounds.");
+			if (b < 0f || b > 1f)
+				throw new IllegalArgumentException("Cannot convert to RGB - R outside the 0-1 bounds.");
+		}
+
 		return new RGBColorSpace(r, g, b);
+	}
+
+	@Override
+	@Nonnull
+	public RGBColorSpace toRGB() {
+		return internalToRGB(true, false);
 	}
 
 	@Override
@@ -87,19 +109,14 @@ public class XYZColorSpace implements ColorSpace<XYZColorSpace> {
 		);
 	}
 
-	@Nonnull public RGBColorSpace toExactRGB() {
-		RGBColorSpace rgb = toRGB();
-		if (rgb.r < 0 || rgb.r > 1)
-			throw new IllegalArgumentException("Cannot convert to RGB - R outside the 0-1 bounds.");
-		if (rgb.g < 0 || rgb.g > 1)
-			throw new IllegalArgumentException("Cannot convert to RGB - G outside the 0-1 bounds.");
-		if (rgb.b < 0 || rgb.b > 1)
-			throw new IllegalArgumentException("Cannot convert to RGB - B outside the 0-1 bounds.");
-		return rgb;
+	@Nonnull
+	public RGBColorSpace toExactRGB() {
+		return internalToRGB(false, true);
 	}
 
 	@Override
-	@Nonnull public XYZColorSpace ease(@Nonnull XYZColorSpace other, float f) {
+	@Nonnull
+	public XYZColorSpace ease(@Nonnull XYZColorSpace other, float f) {
 		return new XYZColorSpace(
 				Easing.linear.ease(x, other.x, f),
 				Easing.linear.ease(y, other.y, f),

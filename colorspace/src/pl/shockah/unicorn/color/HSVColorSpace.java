@@ -18,11 +18,13 @@ public class HSVColorSpace implements ColorSpace<HSVColorSpace> {
 		this.v = v;
 	}
 
-	@Nonnull public static HSVColorSpace from(@Nonnull RGBColorSpace rgb) {
+	@Nonnull
+	public static HSVColorSpace from(@Nonnull RGBColorSpace rgb) {
 		return from(rgb.r, rgb.g, rgb.b);
 	}
 
-	@Nonnull public static HSVColorSpace from(float r, float g, float b) {
+	@Nonnull
+	public static HSVColorSpace from(float r, float g, float b) {
 		float max = Math2.max(r, g, b);
 		float min = Math2.min(r, g, b);
 		float range = max - min;
@@ -53,7 +55,8 @@ public class HSVColorSpace implements ColorSpace<HSVColorSpace> {
 	}
 
 	@Override
-	@Nonnull public RGBColorSpace toRGB() {
+	@Nonnull
+	public RGBColorSpace toRGB() {
 		float h = this.h * 360f;
 		float x = (h / 60f + 6) % 6;
 		int i = (int)x;
@@ -87,7 +90,8 @@ public class HSVColorSpace implements ColorSpace<HSVColorSpace> {
 	}
 
 	@Override
-	@Nonnull public HSVColorSpace ease(@Nonnull HSVColorSpace other, float f) {
+	@Nonnull
+	public HSVColorSpace ease(@Nonnull HSVColorSpace other, float f) {
 		float h2 = Math2.deltaAngle(this.h, other.h) >= 0 ? other.h : other.h - 1f;
 		float h = Easing.linear.ease(this.h, h2, f);
 		if (h < 0)
