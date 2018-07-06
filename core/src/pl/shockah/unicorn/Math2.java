@@ -1,5 +1,7 @@
 package pl.shockah.unicorn;
 
+import javax.annotation.Nonnull;
+
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -36,7 +38,7 @@ public final class Math2 {
 		return (value - Math.floor(value)) * sign;
 	}
 
-	public static double min(double... values) {
+	public static double min(@Nonnull double... values) {
 		double min = values[0];
 		for (int i = 1; i < values.length; i++) {
 			if (values[i] < min)
@@ -45,7 +47,7 @@ public final class Math2 {
 		return min;
 	}
 
-	public static float min(float... values) {
+	public static float min(@Nonnull float... values) {
 		float min = values[0];
 		for (int i = 1; i < values.length; i++) {
 			if (values[i] < min)
@@ -54,7 +56,7 @@ public final class Math2 {
 		return min;
 	}
 
-	public static long min(long... values) {
+	public static long min(@Nonnull long... values) {
 		long min = values[0];
 		for (int i = 1; i < values.length; i++) {
 			if (values[i] < min)
@@ -63,7 +65,7 @@ public final class Math2 {
 		return min;
 	}
 
-	public static int min(int... values) {
+	public static int min(@Nonnull int... values) {
 		int min = values[0];
 		for (int i = 1; i < values.length; i++) {
 			if (values[i] < min)
@@ -72,7 +74,7 @@ public final class Math2 {
 		return min;
 	}
 
-	public static double max(double... values) {
+	public static double max(@Nonnull double... values) {
 		double max = values[0];
 		for (int i = 1; i < values.length; i++) {
 			if (values[i] > max)
@@ -81,7 +83,7 @@ public final class Math2 {
 		return max;
 	}
 
-	public static float max(float... values) {
+	public static float max(@Nonnull float... values) {
 		float max = values[0];
 		for (int i = 1; i < values.length; i++) {
 			if (values[i] > max)
@@ -90,7 +92,7 @@ public final class Math2 {
 		return max;
 	}
 
-	public static long max(long... values) {
+	public static long max(@Nonnull long... values) {
 		long max = values[0];
 		for (int i = 1; i < values.length; i++) {
 			if (values[i] > max)
@@ -99,7 +101,7 @@ public final class Math2 {
 		return max;
 	}
 
-	public static int max(int... values) {
+	public static int max(@Nonnull int... values) {
 		int max = values[0];
 		for (int i = 1; i < values.length; i++) {
 			if (values[i] > max)
@@ -122,5 +124,41 @@ public final class Math2 {
 
 	public static double clamp(double value, double min, double max) {
 		return value > max ? max : (value < min ? min : value);
+	}
+
+	public static float average(@Nonnull float... values) {
+		float sum = 0f;
+		for (float value : values) {
+			sum += value;
+		}
+		return sum / values.length;
+	}
+
+	public static double average(@Nonnull double... values) {
+		double sum = 0.0;
+		for (double value : values) {
+			sum += value;
+		}
+		return sum / values.length;
+	}
+
+	public static float standardDeviation(@Nonnull float... values) {
+		float average = average(values);
+		float sum = 0f;
+		for (float value : values) {
+			float v = value - average;
+			sum += v * v;
+		}
+		return (float)Math.sqrt(sum / values.length);
+	}
+
+	public static double standardDeviation(@Nonnull double... values) {
+		double average = average(values);
+		double sum = 0.0;
+		for (double value : values) {
+			double v = value - average;
+			sum += v * v;
+		}
+		return Math.sqrt(sum / values.length);
 	}
 }

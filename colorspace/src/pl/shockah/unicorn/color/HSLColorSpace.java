@@ -104,7 +104,7 @@ public class HSLColorSpace implements ColorSpace<HSLColorSpace> {
 	@Override
 	@Nonnull
 	public HSLColorSpace ease(@Nonnull HSLColorSpace other, float f) {
-		float h2 = Math2.deltaAngle(this.h, other.h) >= 0 ? other.h : other.h - 1f;
+		float h2 = Math2.deltaAngle(this.h * 360f, other.h * 360f) >= 0 ? other.h : other.h - 1f;
 		float h = Easing.linear.ease(this.h, h2, f);
 		if (h < 0)
 			h += 1f;
