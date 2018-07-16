@@ -1,10 +1,11 @@
 package pl.shockah.unicorn.collection;
 
+import java.util.Iterator;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-public final class UnorderedPair<T> {
+public final class UnorderedPair<T> implements Iterable<T> {
 	public final T first;
 	public final T second;
 
@@ -62,5 +63,37 @@ public final class UnorderedPair<T> {
 			return new UnorderedPair<>(first, null);
 		else
 			return this;
+	}
+
+	@Override
+	@Nonnull
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
+			private int position = 0;
+
+			@Override
+			public boolean hasNext() {
+				return position < size();
+			}
+
+			@Override
+			public T next() {
+				if (!hasNext())
+					throw new IndexOutOfBoundsException();
+				switch (position) {
+					case 0:
+						return first != null ? first : second;
+					case 1:
+						return second;
+					default:
+						throw new IndexOutOfBoundsException();
+				}
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("remove");
+			}
+		};
 	}
 }

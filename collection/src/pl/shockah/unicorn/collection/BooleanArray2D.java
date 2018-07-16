@@ -1,11 +1,13 @@
 package pl.shockah.unicorn.collection;
 
-import lombok.EqualsAndHashCode;
+import java.util.Iterator;
 
 import javax.annotation.Nonnull;
 
+import lombok.EqualsAndHashCode;
+
 @EqualsAndHashCode
-public class BooleanArray2D {
+public class BooleanArray2D implements Iterable<Array2D.Entry<Boolean>> {
 	public final int width;
 	public final int height;
 	public final int length;
@@ -34,5 +36,31 @@ public class BooleanArray2D {
 
 	public boolean get(int x, int y) {
 		return array[getIndex(x, y)];
+	}
+
+	@Override
+	@Nonnull
+	public Iterator<Array2D.Entry<Boolean>> iterator() {
+		return new Iterator<Array2D.Entry<Boolean>>() {
+			private int position = 0;
+
+			@Override
+			public boolean hasNext() {
+				return position < array.length;
+			}
+
+			@Override
+			public Array2D.Entry<Boolean> next() {
+				int x = position % width;
+				int y = position / width;
+				boolean value = array[position++];
+				return new Array2D.Entry<>(x, y, value);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("remove");
+			}
+		};
 	}
 }

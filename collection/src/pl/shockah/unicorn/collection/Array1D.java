@@ -1,6 +1,7 @@
 package pl.shockah.unicorn.collection;
 
 import java.lang.reflect.Array;
+import java.util.Iterator;
 
 import javax.annotation.Nonnull;
 
@@ -8,7 +9,7 @@ import lombok.EqualsAndHashCode;
 import pl.shockah.unicorn.Primitives;
 
 @EqualsAndHashCode
-public class Array1D<T> {
+public class Array1D<T> implements Iterable<T> {
 	public final int length;
 
 	@Nonnull
@@ -33,5 +34,28 @@ public class Array1D<T> {
 
 	public T get(int index) {
 		return array[index];
+	}
+
+	@Override
+	@Nonnull
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
+			private int position = 0;
+
+			@Override
+			public boolean hasNext() {
+				return position < array.length;
+			}
+
+			@Override
+			public T next() {
+				return array[position++];
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("remove");
+			}
+		};
 	}
 }
