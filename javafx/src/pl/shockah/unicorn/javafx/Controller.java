@@ -4,10 +4,13 @@ import javax.annotation.Nonnull;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 
 public abstract class Controller {
 	@Getter
+	@Setter(AccessLevel.PROTECTED)
 	Region view;
 
 	protected void onLoaded() {
