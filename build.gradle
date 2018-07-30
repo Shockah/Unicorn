@@ -1,6 +1,6 @@
 allprojects {
 	ext {
-		lombokVersion = "1.16.20"
+		lombokVersion = "1.18.2"
 	}
 
 	repositories {
