@@ -23,6 +23,14 @@ public final class Layout<T extends Controller> {
 	public T load() {
 		try {
 			FXMLLoader loader = new FXMLLoader(manager.getLayoutUrl(name));
+			loader.setControllerFactory(param -> {
+				try {
+					return param.newInstance();
+				} catch (Exception e) {
+					throw new UnexpectedException(e);
+				}
+			});
+
 			loader.load();
 			T controller = loader.getController();
 			controller.view = loader.getRoot();
