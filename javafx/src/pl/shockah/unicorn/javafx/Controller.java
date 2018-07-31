@@ -9,10 +9,14 @@ import javax.annotation.Nonnull;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 public abstract class Controller {
-	@Nonnull
-	public abstract Region getRoot();
+	@Getter
+	@Setter(AccessLevel.PROTECTED)
+	private Region root;
 
 	protected void onLoaded() {
 	}

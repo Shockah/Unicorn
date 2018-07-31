@@ -43,10 +43,30 @@ public final class Layout<T extends Controller> {
 
 			loader.load();
 			T controller = loader.getController();
-			//controller.view = loader.getRoot();
+			controller.setRoot(loader.getRoot());
 			setupControllerRecursive(controller);
 
 			return controller;
+		} catch (IOException e) {
+			throw new UnexpectedException(e);
+		}
+	}
+
+	public void loadIntoController(@Nonnull T controller) {
+		try {
+			FXMLLoader loader = new FXMLLoader(manager.getLayoutUrl(name));
+			loader.setControllerFactory(param -> {
+				try {
+					return param.newInstance();
+				} catch (Exception e) {
+					throw new UnexpectedException(e);
+				}
+			});
+			loader.setController(controller);
+
+			loader.load();
+			controller.setRoot(loader.getRoot());
+			setupControllerRecursive(controller);
 		} catch (IOException e) {
 			throw new UnexpectedException(e);
 		}
