@@ -112,7 +112,7 @@ public final class Layout<T extends Controller> {
 			if (injectedParent == null)
 				continue;
 
-			if (!injectedParent.value().isAssignableFrom(field.getType()))
+			if (!field.getType().isInstance(parent))
 				continue;
 
 			if (!injectedParent.parentName().equals("")) {

@@ -27,9 +27,6 @@ public abstract class Controller {
 	@Target(ElementType.FIELD)
 	public @interface InjectedParent {
 		@Nonnull
-		Class<? extends Controller> value();
-
-		@Nonnull
 		String parentName() default "";
 	}
 
