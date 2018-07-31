@@ -106,8 +106,10 @@ public final class Layout<T extends Controller> {
 					Controller.InjectedChild injectedChild = field.getAnnotation(Controller.InjectedChild.class);
 					if (injectedChild != null) {
 						Field matchingField = getMatchingChildInjectField(injectedChild, controller, childController);
-						if (matchingField != null)
-							field.set(childController, controller);
+						if (matchingField != null) {
+							matchingField.setAccessible(true);
+							matchingField.set(childController, controller);
+						}
 					}
 				}
 
