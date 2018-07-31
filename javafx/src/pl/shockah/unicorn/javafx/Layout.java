@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.Region;
 import pl.shockah.unicorn.UnexpectedException;
 
 public final class Layout<T extends Controller> {
@@ -30,16 +31,22 @@ public final class Layout<T extends Controller> {
 	}
 
 	@Nonnull
+	private FXMLLoader getLoader() {
+		FXMLLoader loader = new FXMLLoader(manager.getLayoutUrl(name));
+		loader.setControllerFactory(param -> {
+			try {
+				return param.newInstance();
+			} catch (Exception e) {
+				throw new UnexpectedException(e);
+			}
+		});
+		return loader;
+	}
+
+	@Nonnull
 	public T load() {
 		try {
-			FXMLLoader loader = new FXMLLoader(manager.getLayoutUrl(name));
-			loader.setControllerFactory(param -> {
-				try {
-					return param.newInstance();
-				} catch (Exception e) {
-					throw new UnexpectedException(e);
-				}
-			});
+			FXMLLoader loader = getLoader();
 
 			loader.load();
 			T controller = loader.getController();
@@ -54,14 +61,7 @@ public final class Layout<T extends Controller> {
 
 	public void loadIntoController(@Nonnull T controller) {
 		try {
-			FXMLLoader loader = new FXMLLoader(manager.getLayoutUrl(name));
-			loader.setControllerFactory(param -> {
-				try {
-					return param.newInstance();
-				} catch (Exception e) {
-					throw new UnexpectedException(e);
-				}
-			});
+			FXMLLoader loader = getLoader();
 			loader.setController(controller);
 
 			loader.load();
@@ -90,10 +90,7 @@ public final class Layout<T extends Controller> {
 		});
 
 		try {
-			List<Field> instanceFields = getAllFields(controller.getClass()).stream()
-					.filter(field -> !Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers()))
-					.collect(Collectors.toList());
-			for (Field field : instanceFields) {
+			for (Field field : getInstanceFields(controller.getClass())) {
 				if (!Controller.class.isAssignableFrom(field.getType()))
 					continue;
 
@@ -101,6 +98,12 @@ public final class Layout<T extends Controller> {
 				Controller childController = (Controller)field.get(controller);
 				if (childController == null)
 					continue;
+
+				Field controllerRootField = getMatchingControllerRootField(controller, childController, field);
+				if (controllerRootField != null) {
+					controllerRootField.setAccessible(true);
+					childController.setRoot((Region)controllerRootField.get(controller));
+				}
 
 				if (field.getAnnotation(FXML.class) != null) {
 					Controller.InjectedChild injectedChild = field.getAnnotation(Controller.InjectedChild.class);
@@ -123,12 +126,26 @@ public final class Layout<T extends Controller> {
 	}
 
 	@Nullable
-	private static Field getMatchingChildInjectField(@Nonnull Controller.InjectedChild injectedChild, @Nonnull Controller parent, @Nonnull Controller child) {
-		List<Field> instanceFields = getAllFields(child.getClass()).stream()
-				.filter(field -> !Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers()))
-				.collect(Collectors.toList());
+	private static Field getMatchingControllerRootField(@Nonnull Controller parent, @Nonnull Controller child, @Nonnull Field childControllerField) {
+		String rootFieldName = childControllerField.getName();
+		rootFieldName = rootFieldName.substring(0, rootFieldName.length() - "Controller".length());
 
-		for (Field field : instanceFields) {
+		for (Field field : getInstanceFields(parent.getClass())) {
+			if (field == childControllerField)
+				continue;
+			if (!Region.class.isAssignableFrom(field.getType()))
+				continue;
+			if (!field.getName().equals(rootFieldName))
+				continue;
+			return field;
+		}
+
+		return null;
+	}
+
+	@Nullable
+	private static Field getMatchingChildInjectField(@Nonnull Controller.InjectedChild injectedChild, @Nonnull Controller parent, @Nonnull Controller child) {
+		for (Field field : getInstanceFields(child.getClass())) {
 			Controller.InjectedParent injectedParent = field.getAnnotation(Controller.InjectedParent.class);
 			if (injectedParent == null)
 				continue;
@@ -145,6 +162,13 @@ public final class Layout<T extends Controller> {
 		}
 
 		return null;
+	}
+
+	@Nonnull
+	private static List<Field> getInstanceFields(@Nonnull Class<?> clazz) {
+		return getAllFields(clazz).stream()
+				.filter(field -> !Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers()))
+				.collect(Collectors.toList());
 	}
 
 	@Nonnull
