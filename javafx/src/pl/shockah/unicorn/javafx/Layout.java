@@ -97,6 +97,7 @@ public final class Layout<T extends Controller> {
 				if (!Controller.class.isAssignableFrom(field.getType()))
 					continue;
 
+				field.setAccessible(true);
 				Controller childController = (Controller)field.get(controller);
 				if (childController == null)
 					continue;
@@ -105,10 +106,8 @@ public final class Layout<T extends Controller> {
 					Controller.InjectedChild injectedChild = field.getAnnotation(Controller.InjectedChild.class);
 					if (injectedChild != null) {
 						Field matchingField = getMatchingChildInjectField(injectedChild, controller, childController);
-						if (matchingField != null) {
-							field.setAccessible(true);
+						if (matchingField != null)
 							field.set(childController, controller);
-						}
 					}
 				}
 
