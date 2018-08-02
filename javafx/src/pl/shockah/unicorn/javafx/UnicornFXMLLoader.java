@@ -8,7 +8,6 @@ import com.sun.javafx.fxml.PropertyNotFoundException;
 import com.sun.javafx.fxml.expression.Expression;
 import com.sun.javafx.fxml.expression.ExpressionValue;
 import com.sun.javafx.fxml.expression.KeyPath;
-import com.sun.javafx.util.Logging;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,9 +79,6 @@ import javafx.util.Callback;
 import pl.shockah.unicorn.UnexpectedException;
 import sun.reflect.CallerSensitive;
 import sun.reflect.Reflection;
-import sun.reflect.misc.ConstructorUtil;
-import sun.reflect.misc.MethodUtil;
-import sun.reflect.misc.ReflectUtil;
 
 import static javafx.fxml.FXMLLoader.ARRAY_COMPONENT_DELIMITER;
 import static javafx.fxml.FXMLLoader.BINDING_EXPRESSION_PREFIX;
@@ -858,7 +854,8 @@ public class UnicornFXMLLoader {
 				if (defaultNSURI != null) {
 					String nsVersion = defaultNSURI.substring(defaultNSURI.lastIndexOf("/") + 1);
 					if (compareJFXVersions(JAVAFX_VERSION, nsVersion) < 0) {
-						Logging.getJavaFXLogger().warning("Loading FXML document with JavaFX API of version " +
+						// Logging.getJavaFXLogger().warning();
+						System.err.println("JavaFX warning: " + "Loading FXML document with JavaFX API of version " +
 								nsVersion + " by JavaFX runtime of version " + JAVAFX_VERSION);
 					}
 				}
@@ -951,7 +948,7 @@ public class UnicornFXMLLoader {
 
 							try {
 								if (controllerFactory == null) {
-									setController(ReflectUtil.newInstance(type));
+									setController(type.newInstance());
 								} else {
 									setController(controllerFactory.call(type));
 								}
@@ -1011,13 +1008,13 @@ public class UnicornFXMLLoader {
 			} else if (factory != null) {
 				Method factoryMethod;
 				try {
-					factoryMethod = MethodUtil.getMethod(type, factory, new Class[] {});
+					factoryMethod = type.getMethod(factory);
 				} catch (NoSuchMethodException exception) {
 					throw constructLoadException(exception);
 				}
 
 				try {
-					value = MethodUtil.invoke(factoryMethod, null, new Object [] {});
+					value = factoryMethod.invoke(null);
 				} catch (IllegalAccessException | InvocationTargetException exception) {
 					throw constructLoadException(exception);
 				}
@@ -1030,7 +1027,7 @@ public class UnicornFXMLLoader {
 
 				if (value == null) {
 					try {
-						value = ReflectUtil.newInstance(type);
+						value = type.newInstance();
 					} catch (InstantiationException | IllegalAccessException exception) {
 						throw constructLoadException(exception);
 					}
@@ -1271,7 +1268,7 @@ public class UnicornFXMLLoader {
 
 			Constructor<?> constructor = null;
 			try {
-				constructor = ConstructorUtil.getConstructor(sourceValueType, new Class[] { sourceValueType });
+				constructor = sourceValueType.getConstructor(sourceValueType);
 			} catch (NoSuchMethodException exception) {
 				// No-op
 			}
@@ -1279,7 +1276,7 @@ public class UnicornFXMLLoader {
 			Object value;
 			if (constructor != null) {
 				try {
-					ReflectUtil.checkPackageAccess(sourceValueType);
+					constructor.setAccessible(true);
 					value = constructor.newInstance(sourceValue);
 				} catch (InstantiationException | IllegalAccessException | InvocationTargetException exception) {
 					throw constructLoadException(exception);
@@ -1337,7 +1334,7 @@ public class UnicornFXMLLoader {
 
 					if (value == null) {
 						try {
-							value = ReflectUtil.newInstance(type);
+							value = type.newInstance();
 						} catch (InstantiationException | IllegalAccessException exception) {
 							throw constructLoadException(exception);
 						}
@@ -1787,9 +1784,9 @@ public class UnicornFXMLLoader {
 		public void invoke(Object... params) {
 			try {
 				if (type != SupportedType.PARAMETERLESS) {
-					MethodUtil.invoke(method, controller, params);
+					method.invoke(controller, params);
 				} else {
-					MethodUtil.invoke(method, controller, new Object[] {});
+					method.invoke(controller);
 				}
 			} catch (InvocationTargetException | IllegalAccessException exception) {
 				throw new RuntimeException(exception);
@@ -2358,7 +2355,7 @@ public class UnicornFXMLLoader {
 
 					if (initializeMethod != null) {
 						try {
-							MethodUtil.invoke(initializeMethod, controller, new Object [] {});
+							initializeMethod.invoke(controller);
 						} catch (IllegalAccessException exception) {
 							// TODO Throw when Initializable is deprecated/removed
 							// throw constructLoadException(exception);
@@ -2906,7 +2903,8 @@ public class UnicornFXMLLoader {
 	 * This method now delegates to {@link #getDefaultClassLoader()}.
 	 */
 	public static Class<?> loadType(String className) throws ClassNotFoundException {
-		ReflectUtil.checkPackageAccess(className);
+		// TODO: potentially find a replacement for that one
+		// ReflectUtil.checkPackageAccess(className);
 		return Class.forName(className, true, getDefaultClassLoader());
 	}
 
@@ -3296,7 +3294,8 @@ public class UnicornFXMLLoader {
 				return;
 			}
 
-			ReflectUtil.checkPackageAccess(type);
+			// TODO: potentially find a replacement for that one:
+			// ReflectUtil.checkPackageAccess(type);
 
 			addAccessibleMembers(type.getSuperclass(),
 					allowedClassAccess,
