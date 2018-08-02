@@ -14,7 +14,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Region;
 import pl.shockah.unicorn.UnexpectedException;
 
@@ -31,8 +30,8 @@ public final class Layout<T extends Controller> {
 	}
 
 	@Nonnull
-	private FXMLLoader getLoader() {
-		FXMLLoader loader = new FXMLLoader(manager.getLayoutUrl(name));
+	private UnicornFXMLLoader getLoader() {
+		UnicornFXMLLoader loader = new UnicornFXMLLoader(manager.getLayoutUrl(name));
 		loader.setControllerFactory(param -> {
 			try {
 				return param.newInstance();
@@ -46,7 +45,7 @@ public final class Layout<T extends Controller> {
 	@Nonnull
 	public T load() {
 		try {
-			FXMLLoader loader = getLoader();
+			UnicornFXMLLoader loader = getLoader();
 
 			loader.load();
 			T controller = loader.getController();
@@ -61,7 +60,7 @@ public final class Layout<T extends Controller> {
 
 	public void loadIntoController(@Nonnull T controller) {
 		try {
-			FXMLLoader loader = getLoader();
+			UnicornFXMLLoader loader = getLoader();
 			loader.setController(controller);
 
 			loader.load();
@@ -90,7 +89,7 @@ public final class Layout<T extends Controller> {
 		});
 
 		try {
-			for (Field field : getInstanceFields(controller.getClass())) {
+			for (Field field : getMutableInstanceFields(controller.getClass())) {
 				if (!Controller.class.isAssignableFrom(field.getType()))
 					continue;
 
@@ -130,7 +129,7 @@ public final class Layout<T extends Controller> {
 		String rootFieldName = childControllerField.getName();
 		rootFieldName = rootFieldName.substring(0, rootFieldName.length() - "Controller".length());
 
-		for (Field field : getInstanceFields(parent.getClass())) {
+		for (Field field : getMutableInstanceFields(parent.getClass())) {
 			if (field == childControllerField)
 				continue;
 			if (!Region.class.isAssignableFrom(field.getType()))
@@ -145,7 +144,7 @@ public final class Layout<T extends Controller> {
 
 	@Nullable
 	private static Field getMatchingChildInjectField(@Nonnull Controller.InjectedChild injectedChild, @Nonnull Controller parent, @Nonnull Controller child) {
-		for (Field field : getInstanceFields(child.getClass())) {
+		for (Field field : getMutableInstanceFields(child.getClass())) {
 			Controller.InjectedParent injectedParent = field.getAnnotation(Controller.InjectedParent.class);
 			if (injectedParent == null)
 				continue;
@@ -165,7 +164,7 @@ public final class Layout<T extends Controller> {
 	}
 
 	@Nonnull
-	private static List<Field> getInstanceFields(@Nonnull Class<?> clazz) {
+	private static List<Field> getMutableInstanceFields(@Nonnull Class<?> clazz) {
 		return getAllFields(clazz).stream()
 				.filter(field -> !Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers()))
 				.collect(Collectors.toList());

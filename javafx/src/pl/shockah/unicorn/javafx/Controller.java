@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public abstract class Controller {
+	@FXMLRoot
 	@Getter
 	@Setter(AccessLevel.PROTECTED)
 	private Region root;
