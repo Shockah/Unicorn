@@ -11,6 +11,10 @@ public class Lazy<T> implements Func0<T> {
 		this.generator = generator;
 	}
 
+	public T get() {
+		return call();
+	}
+
 	@Override
 	public T call() {
 		if (generator != null) {
