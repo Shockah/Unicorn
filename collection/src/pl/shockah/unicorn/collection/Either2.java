@@ -39,7 +39,7 @@ public class Either2<A, B> {
 			throw new IllegalArgumentException("Exactly one parameter has to be non-null.");
 	}
 
-	interface Consumer<T> {
+	public interface Consumer<T> {
 		void accept(@Nonnull T value);
 	}
 }

@@ -50,7 +50,7 @@ public class Either3<A, B, C> {
 			throw new IllegalArgumentException("Exactly one parameter has to be non-null.");
 	}
 
-	interface Consumer<T> {
+	public interface Consumer<T> {
 		void accept(@Nonnull T obj);
 	}
 }
