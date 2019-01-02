@@ -4,12 +4,14 @@ import java.net.URL;
 
 import javax.annotation.Nonnull;
 
+import javafx.scene.layout.Region;
+
 public interface LayoutManager {
 	@Nonnull
 	URL getLayoutUrl(@Nonnull String layoutName);
 
 	@Nonnull
-	default <T extends Controller> Layout<T> getLayout(@Nonnull String layoutName) {
+	default <T extends Controller<? extends Region>> Layout<T> getLayout(@Nonnull String layoutName) {
 		return new Layout<>(this, layoutName);
 	}
 

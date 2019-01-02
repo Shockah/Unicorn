@@ -13,11 +13,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-public abstract class Controller {
+public abstract class Controller<Root extends Region> {
 	@FXMLRoot
 	@Getter
 	@Setter(AccessLevel.PROTECTED)
-	private Region root;
+	private Root root;
 
 	protected void onLoaded() {
 	}

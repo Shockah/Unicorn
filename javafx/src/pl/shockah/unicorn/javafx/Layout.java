@@ -17,7 +17,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Region;
 import pl.shockah.unicorn.UnexpectedException;
 
-public final class Layout<T extends Controller> {
+public final class Layout<T extends Controller<? extends Region>> {
 	@Nonnull
 	public final LayoutManager manager;
 
@@ -75,6 +75,7 @@ public final class Layout<T extends Controller> {
 		setupControllerRecursive(controller, new LinkedHashSet<>());
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void setupControllerRecursive(@Nonnull Controller controller, @Nonnull Set<Controller> handledControllers) {
 		if (handledControllers.contains(controller))
 			return;
@@ -94,7 +95,7 @@ public final class Layout<T extends Controller> {
 					continue;
 
 				field.setAccessible(true);
-				Controller childController = (Controller)field.get(controller);
+				Controller<Region> childController = (Controller<Region>)field.get(controller);
 				if (childController == null)
 					continue;
 
